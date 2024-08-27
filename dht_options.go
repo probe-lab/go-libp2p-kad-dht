@@ -356,3 +356,10 @@ func AddressFilter(f func([]ma.Multiaddr) []ma.Multiaddr) Option {
 		return nil
 	}
 }
+
+func RequestsLogChan(ch chan dhtcfg.RequestLog) Option {
+	return func(c *dhtcfg.Config) error {
+		c.RequestsLogChan = ch
+		return nil
+	}
+}

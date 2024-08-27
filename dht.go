@@ -164,6 +164,9 @@ type IpfsDHT struct {
 	// addrFilter is used to filter the addresses we put into the peer store.
 	// Mostly used to filter out localhost and local addresses.
 	addrFilter func([]ma.Multiaddr) []ma.Multiaddr
+
+	// requestsLogChan is a channel to log incoming requests
+	requestsLogChan chan dhtcfg.RequestLog
 }
 
 // Assert that IPFS assumptions about interfaces aren't broken. These aren't a
