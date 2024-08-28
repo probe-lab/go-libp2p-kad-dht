@@ -208,6 +208,7 @@ func New(ctx context.Context, h host.Host, options ...Option) (*IpfsDHT, error) 
 	dht.enableProviders = cfg.EnableProviders
 	dht.enableValues = cfg.EnableValues
 	dht.disableFixLowPeers = cfg.DisableFixLowPeers
+	dht.requestsLogChan = cfg.RequestsLogChan
 
 	dht.Validator = cfg.Validator
 	dht.msgSender = net.NewMessageSenderImpl(h, dht.protocols)
