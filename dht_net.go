@@ -97,12 +97,16 @@ func (dht *IpfsDHT) handleNewMessage(s network.Stream) bool {
 			tag.Upsert(metrics.KeyMessageType, req.GetType().String()),
 		)
 
-		dht.requestsLogChan <- antslog.RequestLog{
+		select {
+		case dht.requestsLogChan <- antslog.RequestLog{
 			Timestamp: startTime,
 			Self:      dht.self,
 			Requester: mPeer,
 			Type:      uint8(req.GetType()),
 			Target:    multihash.Multihash(req.GetKey()),
+		}:
+		default:
+			baseLogger.Check(zap.ErrorLevel, "failed to log request, queue full")
 		}
 
 		stats.Record(ctx,
