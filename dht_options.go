@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/libp2p/go-libp2p-kad-dht/antslog"
 	dhtcfg "github.com/libp2p/go-libp2p-kad-dht/internal/config"
 	"github.com/libp2p/go-libp2p-kad-dht/providers"
 	"github.com/libp2p/go-libp2p-kbucket/peerdiversity"
@@ -357,7 +358,7 @@ func AddressFilter(f func([]ma.Multiaddr) []ma.Multiaddr) Option {
 	}
 }
 
-func RequestsLogChan(ch chan dhtcfg.RequestLog) Option {
+func RequestsLogChan(ch chan antslog.RequestLog) Option {
 	return func(c *dhtcfg.Config) error {
 		c.RequestsLogChan = ch
 		return nil

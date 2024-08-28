@@ -7,6 +7,7 @@ import (
 	"github.com/ipfs/boxo/ipns"
 	ds "github.com/ipfs/go-datastore"
 	dssync "github.com/ipfs/go-datastore/sync"
+	"github.com/libp2p/go-libp2p-kad-dht/antslog"
 	"github.com/libp2p/go-libp2p-kad-dht/providers"
 	"github.com/libp2p/go-libp2p-kbucket/peerdiversity"
 	record "github.com/libp2p/go-libp2p-record"
@@ -14,7 +15,6 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/multiformats/go-multihash"
 )
 
 // DefaultPrefix is the application specific prefix attached to all DHT protocols by default.
@@ -31,14 +31,6 @@ type QueryFilterFunc func(dht interface{}, ai peer.AddrInfo) bool
 // RouteTableFilterFunc is a filter applied when considering connections to keep in
 // the local route table.
 type RouteTableFilterFunc func(dht interface{}, p peer.ID) bool
-
-type RequestLog struct {
-	Timestamp time.Time
-	Self      peer.ID
-	Requester peer.ID
-	Type      uint8
-	Target    multihash.Multihash
-}
 
 // Config is a structure containing all the options that can be used when constructing a DHT.
 type Config struct {
@@ -78,7 +70,7 @@ type Config struct {
 	EnableOptimisticProvide       bool
 	OptimisticProvideJobsPoolSize int
 
-	RequestsLogChan chan RequestLog
+	RequestsLogChan chan antslog.RequestLog
 }
 
 func EmptyQueryFilter(_ interface{}, ai peer.AddrInfo) bool { return true }

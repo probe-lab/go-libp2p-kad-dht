@@ -18,6 +18,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 
+	"github.com/libp2p/go-libp2p-kad-dht/antslog"
 	"github.com/libp2p/go-libp2p-kad-dht/internal"
 	dhtcfg "github.com/libp2p/go-libp2p-kad-dht/internal/config"
 	"github.com/libp2p/go-libp2p-kad-dht/internal/net"
@@ -166,7 +167,7 @@ type IpfsDHT struct {
 	addrFilter func([]ma.Multiaddr) []ma.Multiaddr
 
 	// requestsLogChan is a channel to log incoming requests
-	requestsLogChan chan dhtcfg.RequestLog
+	requestsLogChan chan antslog.RequestLog
 }
 
 // Assert that IPFS assumptions about interfaces aren't broken. These aren't a
