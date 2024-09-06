@@ -97,6 +97,12 @@ func (dht *IpfsDHT) handleNewMessage(s network.Stream) bool {
 			tag.Upsert(metrics.KeyMessageType, req.GetType().String()),
 		)
 
+		maddrs := dht.host.Peerstore().Addrs(mPeer)
+		agent, err := dht.host.Peerstore().Get(mPeer, "AgentVersion")
+		if err != nil {
+			agent = "unknown"
+		}
+
 		select {
 		case dht.requestsLogChan <- antslog.RequestLog{
 			Timestamp: startTime,
@@ -104,6 +110,8 @@ func (dht *IpfsDHT) handleNewMessage(s network.Stream) bool {
 			Requester: mPeer,
 			Type:      uint8(req.GetType()),
 			Target:    multihash.Multihash(req.GetKey()),
+			Maddrs:    maddrs,
+			Agent:     agent.(string),
 		}:
 		default:
 			baseLogger.Check(zap.ErrorLevel, "failed to log request, queue full")
