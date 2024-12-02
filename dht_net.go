@@ -4,13 +4,11 @@ import (
 	"io"
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/network"
-	"github.com/multiformats/go-multihash"
-
-	"github.com/libp2p/go-libp2p-kad-dht/antslog"
+	"github.com/libp2p/go-libp2p-kad-dht/ants"
 	"github.com/libp2p/go-libp2p-kad-dht/internal/net"
 	"github.com/libp2p/go-libp2p-kad-dht/metrics"
 	pb "github.com/libp2p/go-libp2p-kad-dht/pb"
+	"github.com/libp2p/go-libp2p/core/network"
 
 	"github.com/libp2p/go-msgio"
 	"go.opencensus.io/stats"
@@ -97,13 +95,28 @@ func (dht *IpfsDHT) handleNewMessage(s network.Stream) bool {
 			tag.Upsert(metrics.KeyMessageType, req.GetType().String()),
 		)
 
+		agentVersion := ""
+		val, err := dht.peerstore.Get(mPeer, "AgentVersion")
+		if err == nil {
+			agentVersion = val.(string)
+		}
+
+		maddrs := dht.peerstore.Addrs(mPeer)
+		protocolIDs, _ := dht.peerstore.GetProtocols(mPeer) // ignore error
+
 		select {
-		case dht.requestsLogChan <- antslog.RequestLog{
-			Timestamp: startTime,
-			Self:      dht.self,
-			Requester: mPeer,
-			Type:      uint8(req.GetType()),
-			Target:    multihash.Multihash(req.GetKey()),
+		case dht.requestsLogChan <- ants.RequestEvent{
+			Timestamp:    startTime,
+			Self:         dht.self,
+			Remote:       mPeer,
+			Type:         req.GetType(),
+			Target:       req.GetKey(),
+			Transport:    s.Conn().ConnState().Transport,
+			Security:     s.Conn().ConnState().Security,
+			Muxer:        s.Conn().ConnState().StreamMultiplexer,
+			AgentVersion: agentVersion,
+			Protocols:    protocolIDs,
+			Maddrs:       maddrs,
 		}:
 		default:
 			baseLogger.Check(zap.ErrorLevel, "failed to log request, queue full")
