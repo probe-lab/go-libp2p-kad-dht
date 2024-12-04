@@ -106,14 +106,14 @@ func (dht *IpfsDHT) handleNewMessage(s network.Stream) bool {
 
 		select {
 		case dht.requestsLogChan <- ants.RequestEvent{
-			Timestamp:    startTime,
-			Self:         dht.self,
-			Remote:       mPeer,
-			Type:         req.GetType(),
-			Target:       req.GetKey(),
-			Transport:    s.Conn().ConnState().Transport,
-			Security:     s.Conn().ConnState().Security,
-			Muxer:        s.Conn().ConnState().StreamMultiplexer,
+			Timestamp: startTime,
+			Self:      dht.self,
+			Remote:    mPeer,
+			Type:      req.GetType(),
+			Target:    req.GetKey(),
+			// Transport:    s.Conn().ConnState().Transport,
+			// Security:     s.Conn().ConnState().Security,
+			// Muxer:        s.Conn().ConnState().StreamMultiplexer,
 			AgentVersion: agentVersion,
 			Protocols:    protocolIDs,
 			Maddrs:       maddrs,
