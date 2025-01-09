@@ -104,6 +104,13 @@ func (dht *IpfsDHT) handleNewMessage(s network.Stream) bool {
 		maddrs := dht.peerstore.Addrs(mPeer)
 		protocolIDs, _ := dht.peerstore.GetProtocols(mPeer) // ignore error
 
+		// Sometimes we can get agent versions and protocols from the peer store
+		// but there are no addresses. If there are no addresses in the peer
+		// store, we at least use the one from this connection.
+		if len(maddrs) == 0 {
+			maddrs = append(maddrs, s.Conn().RemoteMultiaddr())
+		}
+
 		select {
 		case dht.requestsLogChan <- ants.RequestEvent{
 			Timestamp: startTime,
